@@ -13,6 +13,7 @@ public class GameController : MonoBehaviour
     public List<GameObject> platforms;
     public float platformDropSpeed = 1f;
 
+    private float highestPlatformPosition = -100000f;
 
     // Start is called before the first frame update
     void Start()
@@ -37,8 +38,11 @@ public class GameController : MonoBehaviour
 
     private void UpdatePlatforms()
     {
+        highestPlatformPosition = -100000f;
+
         foreach (GameObject platform in platforms)
         {
+            platform.transform.Translate(0f, -platformDropSpeed, 0f);
             if (platform.transform.position.y < -10f)
             {
                 Debug.Log("Destroying platform.");
@@ -46,19 +50,16 @@ public class GameController : MonoBehaviour
                 Destroy(platform);
                 continue;
             }
-            platform.transform.Translate(0f, -platformDropSpeed, 0f);
-
-            float highestPlatformPosition = -100000f;
             if (platform.transform.position.y >= highestPlatformPosition)
             {
                 highestPlatformPosition = platform.transform.position.y;
                 Debug.Log("Highest platform now at " + highestPlatformPosition);
             }
+        }
 
-            if (highestPlatformPosition <= -5 && platforms.Count < 2f)
-            {
-                StartCoroutine(SpawnPlatform());
-            }
+        if (highestPlatformPosition <= 4f && platforms.Count < 10f)
+        {
+            StartCoroutine(SpawnPlatform());
         }
 
     }
@@ -78,9 +79,10 @@ public class GameController : MonoBehaviour
             platformPosX = platformEdge;
 
         GameObject newPlatform = Instantiate(platformPrefab);
-        newPlatform.transform.position = new Vector3(platformPosX, 0f, 28.75f);
+        newPlatform.transform.position = new Vector3(platformPosX, 7.5f, 28.75f);
         newPlatform.transform.localScale = new Vector3(platformScaleX, 1f, 2.5f);
         platforms.Add(newPlatform);
+        highestPlatformPosition = 5f;
         yield return 0;
     }
 }
