@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class BallHandler : MonoBehaviour
 {
-    public float offset = 1f;
+    public float xSpeed = 1f;
+    public float mouseToBallOffsetMult = 0.01f;
     public float maxYSpeed = 5f;
 
     private Rigidbody rb;
-    private float initialMouseXPos;
-    private float initialBallXPos;
+    private float ballOffset;
     private bool mouseDown;
+    private Vector3 intendedBallPosition;
 
     // Start is called before the first frame update
     void Start()
@@ -22,15 +23,7 @@ public class BallHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            mouseDown = true;
-            initialMouseXPos = Input.mousePosition.x;
-            initialBallXPos = transform.position.x;
-        }
 
-        if (mouseDown && Input.GetMouseButtonUp(0))
-            mouseDown = false;
     }
 
     private void FixedUpdate()
@@ -38,10 +31,31 @@ public class BallHandler : MonoBehaviour
         if (rb.velocity.y >= maxYSpeed)
             rb.velocity = new Vector3(rb.velocity.x, maxYSpeed, rb.velocity.z);
 
-        if (Input.GetMouseButton(0) && mouseDown)
+        if (Input.GetMouseButton(0))
         {
-            transform.position = new Vector3(initialBallXPos + (Input.mousePosition.x - initialMouseXPos) * offset, transform.position.y, transform.position.z);
+            intendedBallPosition = Camera.main.ScreenPointToRay(Input.mousePosition).GetPoint(-Camera.main.transform.position.z);
+            ballOffset = intendedBallPosition.x - transform.position.x;
+            if (ballOffset > 1f)
+            {
+                rb.velocity = new Vector3(xSpeed, rb.velocity.y, rb.velocity.z);
+                Debug.Log("moving right!");
+            }
+            else if (ballOffset < 1f)
+            {
+                rb.velocity = new Vector3(-xSpeed, rb.velocity.y, rb.velocity.z);
+                Debug.Log("moving left!");
+            }
+            else
+            {
+                rb.velocity = new Vector3(0f, rb.velocity.y, rb.velocity.z);
+                Debug.Log("not moving!");
+            }
         }
+        else
+        {
+            rb.velocity = new Vector3(0f, rb.velocity.y, rb.velocity.z);
+        }
+
     }
 
 }
