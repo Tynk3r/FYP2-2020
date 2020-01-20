@@ -5,7 +5,9 @@ using UnityEngine;
 public class BallHandler : MonoBehaviour
 {
     public float offset = 1f;
+    public float maxYSpeed = 5f;
 
+    private Rigidbody rb;
     private float initialMouseXPos;
     private float initialBallXPos;
     private bool mouseDown;
@@ -13,7 +15,8 @@ public class BallHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        if (GetComponent<Rigidbody>() != null)
+            rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -32,6 +35,9 @@ public class BallHandler : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (rb.velocity.y >= maxYSpeed)
+            rb.velocity = new Vector3(rb.velocity.x, maxYSpeed, rb.velocity.z);
+
         if (Input.GetMouseButton(0) && mouseDown)
         {
             transform.position = new Vector3(initialBallXPos + (Input.mousePosition.x - initialMouseXPos) * offset, transform.position.y, transform.position.z);
