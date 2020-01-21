@@ -5,12 +5,10 @@ using UnityEngine;
 public class BallHandler : MonoBehaviour
 {
     public float xSpeed = 1f;
-    public float mouseToBallOffsetMult = 0.01f;
     public float maxYSpeed = 5f;
 
     private Rigidbody rb;
     private float ballOffset;
-    private bool mouseDown;
     private Vector3 intendedBallPosition;
 
     // Start is called before the first frame update
@@ -35,12 +33,12 @@ public class BallHandler : MonoBehaviour
         {
             intendedBallPosition = Camera.main.ScreenPointToRay(Input.mousePosition).GetPoint(-Camera.main.transform.position.z);
             ballOffset = intendedBallPosition.x - transform.position.x;
-            if (ballOffset > 1f)
+            if (ballOffset > 0.1f)
             {
                 rb.velocity = new Vector3(xSpeed, rb.velocity.y, rb.velocity.z);
                 Debug.Log("moving right!");
             }
-            else if (ballOffset < 1f)
+            else if (ballOffset < -0.1f)
             {
                 rb.velocity = new Vector3(-xSpeed, rb.velocity.y, rb.velocity.z);
                 Debug.Log("moving left!");

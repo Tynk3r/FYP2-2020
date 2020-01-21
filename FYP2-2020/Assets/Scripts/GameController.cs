@@ -22,9 +22,7 @@ public class GameController : MonoBehaviour
     {
         ball.SetActive(false);
         if (platforms.Count == 0)
-        {
             StartCoroutine(SpawnPlatform());
-        }
     }
 
     // Update is called once per frame
@@ -46,7 +44,6 @@ public class GameController : MonoBehaviour
     private void UpdatePlatforms()
     {
         highestPlatformPosition = -100000f;
-
         foreach (GameObject platform in platforms)
         {
             platform.transform.Translate(0f, -platformDropSpeed, 0f);
@@ -56,9 +53,7 @@ public class GameController : MonoBehaviour
                 continue;
             }
             if (platform.transform.position.y >= highestPlatformPosition)
-            {
                 highestPlatformPosition = platform.transform.position.y;
-            }
         }
 
         if (platformsToRemove.Count > 0f)
@@ -82,13 +77,28 @@ public class GameController : MonoBehaviour
     {
         float platformScaleX = Random.Range(2.5f, 5f);
         float platformEdge = Random.Range(-1f, 1f);
-        float platformPosX = 0f;
+        float platformPosX;
         if (platformEdge < 0f)
             platformPosX = platformEdge + platformScaleX;
         else if (platformEdge > 0f)
             platformPosX = platformEdge - platformScaleX;
         else
             platformPosX = platformEdge;
+
+        if (platforms.Count > 0f)
+        {
+            while (Mathf.Abs(platformPosX - platforms[platforms.Count - 1].transform.position.x) < 2.5f)
+            {
+                platformScaleX = Random.Range(2.5f, 5f);
+                platformEdge = Random.Range(-1f, 1f);
+                if (platformEdge < 0f)
+                    platformPosX = platformEdge + platformScaleX;
+                else if (platformEdge > 0f)
+                    platformPosX = platformEdge - platformScaleX;
+                else
+                    platformPosX = platformEdge;
+            }
+        }
 
         GameObject newPlatform = Instantiate(platformPrefab);
         newPlatform.transform.position = new Vector3(platformPosX, 5f, 0f);
