@@ -58,9 +58,18 @@ public class GameController : MonoBehaviour
         foreach (GameObject platform in platforms)
         {
             if (platform.transform.position.z > 2.5f)
+            {
+                if (platform.GetComponent<BoxCollider>() != null && platform.GetComponent<BoxCollider>().enabled)
+                    platform.GetComponent<BoxCollider>().enabled = false;
                 platform.transform.Translate(0f, 0f, -platformEmergeSpeed);
+            }
             else
+            {
+                if (platform.GetComponent<BoxCollider>() != null && !platform.GetComponent<BoxCollider>().enabled)
+                    platform.GetComponent<BoxCollider>().enabled = true;
                 platform.transform.Translate(0f, -platformDropSpeed, 0f);
+
+            }
             if (platform.transform.position.y < -10f)
             {
                 platformsToRemove.Add(platform);
@@ -101,7 +110,7 @@ public class GameController : MonoBehaviour
 
         if (platforms.Count > 0f)
         {
-            while (Mathf.Abs(platformPosX - platforms[platforms.Count - 1].transform.position.x) < 2.5f)
+            while (Mathf.Abs(platformPosX - platforms[platforms.Count - 1].transform.position.x) < 1f)
             {
                 platformScaleX = Random.Range(2.5f, 5f);
                 platformEdge = Random.Range(-1f, 1f);
@@ -117,6 +126,8 @@ public class GameController : MonoBehaviour
         GameObject newPlatform = Instantiate(platformPrefab);
         newPlatform.transform.position = new Vector3(platformPosX, platformEmergePosY, 5.5f);
         newPlatform.transform.localScale = new Vector3(platformScaleX, 1f, 2.5f);
+        if (newPlatform.GetComponent<BoxCollider>() != null)
+            newPlatform.GetComponent<BoxCollider>().enabled = false;
         platforms.Add(newPlatform);
         highestPlatformPosition = 5f;
         yield return 0;

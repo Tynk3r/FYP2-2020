@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(SphereCollider))]
 public class BallHandler : MonoBehaviour
 {
     public float xSpeed = 1f;
@@ -54,6 +55,14 @@ public class BallHandler : MonoBehaviour
             rb.velocity = new Vector3(0f, rb.velocity.y, rb.velocity.z);
         }
 
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        GameObject go = collision.collider.gameObject;
+        if (go.tag == "Platform")
+            if (GetComponent<SphereCollider>().bounds.min.y < go.transform.position.y)
+                GameController.instance.RemovePlatform(go);
     }
 
 }
