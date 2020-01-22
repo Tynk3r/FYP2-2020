@@ -6,6 +6,8 @@ using Random = UnityEngine.Random;
 
 public class GameController : MonoBehaviour
 {
+    public static GameController instance = null;
+
     public bool shouldTimerRun = true;
     public Timer timer;
     public Camera mainCamera;
@@ -13,9 +15,18 @@ public class GameController : MonoBehaviour
     public GameObject platformPrefab;
     public List<GameObject> platforms = new List<GameObject>();
     public float platformDropSpeed = 1f;
+    public float platformEmergeSpeed = 1f;
+    public float gapBetweenPlatforms = 1f;
+    public float platformEmergePosY = 5f;
 
     private float highestPlatformPosition = -100000f;
     private List<GameObject> platformsToRemove = new List<GameObject>();
+
+    private void Awake()
+    {
+        if (instance == null)
+            instance = this;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -46,7 +57,10 @@ public class GameController : MonoBehaviour
         highestPlatformPosition = -100000f;
         foreach (GameObject platform in platforms)
         {
-            platform.transform.Translate(0f, -platformDropSpeed, 0f);
+            if (platform.transform.position.z > 2.5f)
+                platform.transform.Translate(0f, 0f, -platformEmergeSpeed);
+            else
+                platform.transform.Translate(0f, -platformDropSpeed, 0f);
             if (platform.transform.position.y < -10f)
             {
                 platformsToRemove.Add(platform);
@@ -66,7 +80,7 @@ public class GameController : MonoBehaviour
             platformsToRemove.Clear();
         }
 
-        if (highestPlatformPosition <= 2f && platforms.Count < 10f)
+        if (highestPlatformPosition <= platformEmergePosY - gapBetweenPlatforms && platforms.Count < 10f)
         {
             StartCoroutine(SpawnPlatform());
         }
@@ -101,11 +115,16 @@ public class GameController : MonoBehaviour
         }
 
         GameObject newPlatform = Instantiate(platformPrefab);
-        newPlatform.transform.position = new Vector3(platformPosX, 5f, 0f);
+        newPlatform.transform.position = new Vector3(platformPosX, platformEmergePosY, 5.5f);
         newPlatform.transform.localScale = new Vector3(platformScaleX, 1f, 2.5f);
         platforms.Add(newPlatform);
         highestPlatformPosition = 5f;
         yield return 0;
+    }
+
+    public void RemovePlatform(GameObject platform)
+    {
+        platformsToRemove.Add(platform);
     }
 
     private void StartGame()
