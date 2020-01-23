@@ -12,12 +12,16 @@ public class GameController : MonoBehaviour
     public Timer timer;
     public Camera mainCamera;
     public GameObject ball;
+    public float ballEmergeSpeed = 1f;
     public GameObject platformPrefab;
+    public GameObject platformBreakPrefab;
     public List<GameObject> platforms = new List<GameObject>();
     public float platformDropSpeed = 1f;
     public float platformEmergeSpeed = 1f;
     public float gapBetweenPlatforms = 1f;
     public float platformEmergePosY = 5f;
+    public float topOfScreen = 12.5f;
+    public float bottomOfScreen = -12.5f;
 
     private float highestPlatformPosition = -100000f;
     private List<GameObject> platformsToRemove = new List<GameObject>();
@@ -31,7 +35,8 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ball.SetActive(false);
+        if (ball.GetComponent<Rigidbody>() != null && ball.GetComponent<Rigidbody>().useGravity)
+            ball.GetComponent<Rigidbody>().useGravity = false;
         if (platforms.Count == 0)
             StartCoroutine(SpawnPlatform());
     }
@@ -47,7 +52,7 @@ public class GameController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (ball.transform.position.y <= -10f)
+        if (ball.transform.position.y <= bottomOfScreen)
             EndGame();
         UpdatePlatforms();
     }
@@ -70,7 +75,7 @@ public class GameController : MonoBehaviour
                 platform.transform.Translate(0f, -platformDropSpeed, 0f);
 
             }
-            if (platform.transform.position.y < -10f)
+            if (platform.transform.position.y < bottomOfScreen)
             {
                 platformsToRemove.Add(platform);
                 continue;
@@ -135,13 +140,24 @@ public class GameController : MonoBehaviour
 
     public void RemovePlatform(GameObject platform)
     {
+        GameObject destroyEffect = Instantiate(platformBreakPrefab);
+        destroyEffect.transform.position = platform.transform.position;
         platformsToRemove.Add(platform);
     }
 
     private void StartGame()
     {
-        if (!ball.activeSelf)
-            ball.SetActive(true);
+        if (ball.transform.position.z > 2.5f)
+        {
+            if (ball.GetComponent<Rigidbody>() != null && ball.GetComponent<Rigidbody>().useGravity)
+                ball.GetComponent<Rigidbody>().useGravity = false;
+            ball.transform.Translate(-Vector3.forward * ballEmergeSpeed);
+        }
+        else
+        {
+            if (ball.GetComponent<Rigidbody>() != null && !ball.GetComponent<Rigidbody>().useGravity)
+                ball.GetComponent<Rigidbody>().useGravity = true;
+        }
     }
 
     private void EndGame()
