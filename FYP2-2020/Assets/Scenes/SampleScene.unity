@@ -585,7 +585,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1384230780}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 5}
+  m_LocalPosition: {x: 0, y: 7.5, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -605,6 +605,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   xSpeed: 10
   maxYSpeed: 10
+  ballEmergeSpeed: 0.1
 --- !u!96 &1384230787
 TrailRenderer:
   serializedVersion: 2
@@ -841,19 +842,15 @@ MonoBehaviour:
   shouldTimerRun: 1
   timer: {fileID: 122054482}
   mainCamera: {fileID: 963194227}
-  ball: {fileID: 1384230780}
-  ballEmergeSpeed: 0.025
+  ball: {fileID: 1384230786}
   platformPrefab: {fileID: 887260650468317477, guid: 6b77af7d2aa9b644098c1e8048768b04,
     type: 3}
-  platformBreakPrefab: {fileID: 8790955931310101730, guid: 3422ddf89c5baeb4bbca8e5ecefafcae,
-    type: 3}
   platforms: []
-  platformDropSpeed: 0.05
-  platformEmergeSpeed: 0.05
-  gapBetweenPlatforms: 0.01
-  platformEmergePosY: 7.5
-  topOfScreen: 12.5
+  gapBetweenPlatforms: 0.001
+  platformEmergePosY: 11
+  platformRecedePosY: -11
   bottomOfScreen: -13.5
+  blocksBroken: 0
 --- !u!4 &1644798759
 Transform:
   m_ObjectHideFlags: 0

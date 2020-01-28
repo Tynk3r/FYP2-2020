@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 9011004900062182}
   - component: {fileID: 8532349273128824751}
   - component: {fileID: 2656107722678454424}
+  - component: {fileID: 3071504527105326375}
   m_Layer: 0
   m_Name: Platform
   m_TagString: Platform
@@ -92,3 +93,24 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3071504527105326375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 887260650468317477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4437269638fc6424ba3cf94433d1b475, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  platformBreakPrefab: {fileID: 8790955931310101730, guid: 3422ddf89c5baeb4bbca8e5ecefafcae,
+    type: 3}
+  emergeSpeed: 0.05
+  emergeEndZ: 2.5
+  dropSpeed: 0.05
+  endOfDrop: -10
+  recedeSpeed: 0.05
+  recedeEndZ: 5.5
+  toBeRemoved: 0

@@ -6,28 +6,32 @@ using Random = UnityEngine.Random;
 
 public class GameController : MonoBehaviour
 {
+    public enum GAME_STATE
+    {
+        PRE_START = 0,
+        IN_PLAY,
+        ENDED
+    }
+
     public static GameController instance = null;
 
     public bool shouldTimerRun = true;
     public Timer timer;
     public Camera mainCamera;
-    public GameObject ball;
-    public float ballEmergeSpeed = 1f;
+    public BallHandler ball;
     public GameObject platformPrefab;
-    public GameObject platformBreakPrefab;
-    public List<GameObject> platforms = new List<GameObject>();
-    public float platformDropSpeed = 1f;
-    public float platformEmergeSpeed = 1f;
-    public float gapBetweenPlatforms = 1f;
-    public float platformEmergePosY = 5f;
-    public float topOfScreen = 12.5f;
-    public float bottomOfScreen = -12.5f;
+    public List<Platform> platforms = new List<Platform>();
+    public float gapBetweenPlatforms;
+    public float platformEmergePosY;
+    public float platformRecedePosY;
+    public float bottomOfScreen;
 
     [HideInInspector]
     public int blocksBroken = 0;
 
+    private GAME_STATE gameState = GAME_STATE.PRE_START;
     private float highestPlatformPosition = -100000f;
-    private List<GameObject> platformsToRemove = new List<GameObject>();
+    private List<Platform> platformsToRemove = new List<Platform>();
 
     private void Awake()
     {
@@ -39,8 +43,8 @@ public class GameController : MonoBehaviour
     void Start()
     {
         blocksBroken = 0;
-        if (ball.GetComponent<Rigidbody>() != null && ball.GetComponent<Rigidbody>().useGravity)
-            ball.GetComponent<Rigidbody>().useGravity = false;
+        gameState = GAME_STATE.PRE_START;
+        ball.SetBallState(BallHandler.STATE.PRE_START);
         if (platforms.Count == 0)
             StartCoroutine(SpawnPlatform());
     }
@@ -48,57 +52,65 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (platforms.Count >= 5f)
+        if (platforms.Count >= 5f && ball.GetBallState() == BallHandler.STATE.PRE_START)
             StartGame();
-        if (shouldTimerRun)
-            timer.UpdateScore();
     }
 
     private void FixedUpdate()
     {
-        if (ball.transform.position.y <= bottomOfScreen)
-            EndGame();
-        UpdatePlatforms();
+        switch (gameState)
+        {
+            case GAME_STATE.PRE_START:
+                if (platforms.Count > 0)
+                    UpdatePlatforms();
+                break;
+
+            case GAME_STATE.IN_PLAY:
+                ball.UpdateMovement();
+                if (platforms.Count > 0)
+                    UpdatePlatforms();
+                if (ball.transform.position.y <= bottomOfScreen)
+                    EndGame();
+                timer.UpdateScore();
+                break;
+
+            case GAME_STATE.ENDED:
+                break;
+
+            default:
+                break;
+        }
     }
 
     private void UpdatePlatforms()
     {
         highestPlatformPosition = -100000f;
-        foreach (GameObject platform in platforms)
+        foreach (Platform platform in platforms)
         {
-            if (platform.transform.position.z > 2.5f)
-            {
-                if (platform.GetComponent<BoxCollider>() != null && platform.GetComponent<BoxCollider>().enabled)
-                    platform.GetComponent<BoxCollider>().enabled = false;
-                platform.transform.Translate(0f, 0f, -platformEmergeSpeed);
-            }
-            else
-            {
-                if (platform.GetComponent<BoxCollider>() != null && !platform.GetComponent<BoxCollider>().enabled)
-                    platform.GetComponent<BoxCollider>().enabled = true;
-                platform.transform.Translate(0f, -platformDropSpeed, 0f);
-
-            }
-            if (platform.transform.position.y < bottomOfScreen)
+            if (platform.toBeRemoved)
             {
                 platformsToRemove.Add(platform);
                 continue;
             }
+
+            platform.UpdateMovement();
             if (platform.transform.position.y >= highestPlatformPosition)
                 highestPlatformPosition = platform.transform.position.y;
+            if (platform.transform.position.y <= platformRecedePosY)
+                platform.Recede();
         }
 
         if (platformsToRemove.Count > 0f)
         {
-            foreach (GameObject platformToBeRemoved in platformsToRemove)
+            foreach (Platform platformToBeRemoved in platformsToRemove)
             {
                 platforms.Remove(platformToBeRemoved);
-                Destroy(platformToBeRemoved);
+                Destroy(platformToBeRemoved.gameObject);
             }
             platformsToRemove.Clear();
         }
 
-        if (highestPlatformPosition <= platformEmergePosY - gapBetweenPlatforms && platforms.Count < 10f)
+        if (platforms.Count < 10f && highestPlatformPosition <= platformEmergePosY - gapBetweenPlatforms)
         {
             StartCoroutine(SpawnPlatform());
         }
@@ -135,42 +147,27 @@ public class GameController : MonoBehaviour
         GameObject newPlatform = Instantiate(platformPrefab);
         newPlatform.transform.position = new Vector3(platformPosX, platformEmergePosY, 5.5f);
         newPlatform.transform.localScale = new Vector3(platformScaleX, 1f, 2.5f);
+        if (newPlatform.GetComponent<Platform>() != null)
+            platforms.Add(newPlatform.GetComponent<Platform>());
         if (newPlatform.GetComponent<BoxCollider>() != null)
             newPlatform.GetComponent<BoxCollider>().enabled = false;
-        platforms.Add(newPlatform);
-        highestPlatformPosition = 5f;
+        highestPlatformPosition = platformEmergePosY;
         yield return 0;
-    }
-
-    public void ShatterPlatform(GameObject platform)
-    {
-        blocksBroken++;
-        GameObject destroyEffect = Instantiate(platformBreakPrefab);
-        destroyEffect.transform.position = platform.transform.position;
-        platformsToRemove.Add(platform);
     }
 
     private void StartGame()
     {
-        if (ball.transform.position.z > 2.5f)
-        {
-            if (ball.GetComponent<Rigidbody>() != null && ball.GetComponent<Rigidbody>().useGravity)
-                ball.GetComponent<Rigidbody>().useGravity = false;
-            ball.transform.Translate(-Vector3.forward * ballEmergeSpeed);
-        }
-        else
-        {
-            if (ball.GetComponent<Rigidbody>() != null && !ball.GetComponent<Rigidbody>().useGravity)
-                ball.GetComponent<Rigidbody>().useGravity = true;
-        }
+        gameState = GAME_STATE.IN_PLAY;
+        ball.SetBallState(BallHandler.STATE.EMERGING);
     }
 
     private void EndGame()
     {
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
+        //UnityEditor.EditorApplication.isPlaying = false;
 #else
-         Application.Quit();
+         //Application.Quit();
 #endif
+        gameState = GAME_STATE.ENDED;
     }
 }

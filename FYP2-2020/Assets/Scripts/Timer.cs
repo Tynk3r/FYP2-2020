@@ -9,11 +9,11 @@ public class Timer : MonoBehaviour
     private float timeElapsed = 0f;
     void Update()
     {
-        timeElapsed += Time.deltaTime;
     }
 
     public void UpdateScore()
     {
+        timeElapsed += Time.deltaTime;
         // score = (int)(time elapsed) + (int)(number of blocks broken * 100)
 
         //set timer UI
