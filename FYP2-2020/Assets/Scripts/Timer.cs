@@ -9,13 +9,14 @@ public class Timer : MonoBehaviour
     private float timeElapsed = 0f;
     void Update()
     {
-
+        timeElapsed += Time.deltaTime;
     }
 
-    public void UpdateTimerText()
+    public void UpdateScore()
     {
+        // score = (int)(time elapsed) + (int)(number of blocks broken * 100)
+
         //set timer UI
-        timeElapsed += Time.deltaTime;
-        timerText.text = timeElapsed.ToString();
+        timerText.text = "Score: " + ((int)timeElapsed + (GameController.instance.blocksBroken * 10)).ToString();
     }
 }

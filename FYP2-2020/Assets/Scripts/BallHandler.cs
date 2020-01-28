@@ -62,7 +62,7 @@ public class BallHandler : MonoBehaviour
         GameObject go = collision.collider.gameObject;
         if (go.tag == "Platform")
             if (GetComponent<SphereCollider>().bounds.min.y < go.transform.position.y)
-                GameController.instance.RemovePlatform(go);
+                GameController.instance.ShatterPlatform(go);
     }
 
 }

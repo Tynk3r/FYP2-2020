@@ -23,6 +23,9 @@ public class GameController : MonoBehaviour
     public float topOfScreen = 12.5f;
     public float bottomOfScreen = -12.5f;
 
+    [HideInInspector]
+    public int blocksBroken = 0;
+
     private float highestPlatformPosition = -100000f;
     private List<GameObject> platformsToRemove = new List<GameObject>();
 
@@ -35,6 +38,7 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        blocksBroken = 0;
         if (ball.GetComponent<Rigidbody>() != null && ball.GetComponent<Rigidbody>().useGravity)
             ball.GetComponent<Rigidbody>().useGravity = false;
         if (platforms.Count == 0)
@@ -47,7 +51,7 @@ public class GameController : MonoBehaviour
         if (platforms.Count >= 5f)
             StartGame();
         if (shouldTimerRun)
-            timer.UpdateTimerText();
+            timer.UpdateScore();
     }
 
     private void FixedUpdate()
@@ -138,8 +142,9 @@ public class GameController : MonoBehaviour
         yield return 0;
     }
 
-    public void RemovePlatform(GameObject platform)
+    public void ShatterPlatform(GameObject platform)
     {
+        blocksBroken++;
         GameObject destroyEffect = Instantiate(platformBreakPrefab);
         destroyEffect.transform.position = platform.transform.position;
         platformsToRemove.Add(platform);
