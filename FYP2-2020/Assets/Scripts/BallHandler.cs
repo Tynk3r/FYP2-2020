@@ -56,33 +56,27 @@ public class BallHandler : MonoBehaviour
                 break;
 
             case STATE.IN_PLAY:
-                if (Input.GetAxis("Horizontal") > 0f)
+                /*if (Input.GetMouseButton(0))
                 {
-                    rb.velocity = new Vector3(xSpeed, rb.velocity.y, rb.velocity.z);
-                }
-                else if (Input.GetAxis("Horizontal") < 0f)
-                {
-                    rb.velocity = new Vector3(-xSpeed, rb.velocity.y, rb.velocity.z);
+                    intendedBallPosition = Camera.main.ScreenPointToRay(Input.mousePosition).GetPoint(-Camera.main.transform.position.z + transform.position.z);
+                    ballOffset = intendedBallPosition.x - transform.position.x;
+                    if (ballOffset > 0.1f)
+                        rb.velocity = new Vector3(xSpeed, rb.velocity.y, rb.velocity.z);
+                    else if (ballOffset < -0.1f)
+                        rb.velocity = new Vector3(-xSpeed, rb.velocity.y, rb.velocity.z);
+                    else
+                        rb.velocity = new Vector3(0f, rb.velocity.y, rb.velocity.z);
                 }
                 else
                 {
                     rb.velocity = new Vector3(0f, rb.velocity.y, rb.velocity.z);
-                }
-                //if (Input.GetMouseButton(0))
-                //{
-                //    intendedBallPosition = Camera.main.ScreenPointToRay(Input.mousePosition).GetPoint(-Camera.main.transform.position.z + transform.position.z);
-                //    ballOffset = intendedBallPosition.x - transform.position.x;
-                //    if (ballOffset > 0.1f)
-                //        rb.velocity = new Vector3(xSpeed, rb.velocity.y, rb.velocity.z);
-                //    else if (ballOffset < -0.1f)
-                //        rb.velocity = new Vector3(-xSpeed, rb.velocity.y, rb.velocity.z);
-                //    else
-                //        rb.velocity = new Vector3(0f, rb.velocity.y, rb.velocity.z);
-                //}
-                //else
-                //{
-                //    rb.velocity = new Vector3(0f, rb.velocity.y, rb.velocity.z);
-                //}
+                }*/
+                if (Input.GetAxis("Horizontal") > 0f)
+                    rb.velocity = new Vector3(xSpeed, rb.velocity.y, rb.velocity.z);
+                else if (Input.GetAxis("Horizontal") < 0f)
+                    rb.velocity = new Vector3(-xSpeed, rb.velocity.y, rb.velocity.z);
+                else
+                    rb.velocity = new Vector3(0f, rb.velocity.y, rb.velocity.z);
                 break;
 
             default:
@@ -100,6 +94,8 @@ public class BallHandler : MonoBehaviour
                     GetComponent<Rigidbody>().isKinematic = true;
                 if (GetComponent<Rigidbody>() != null && GetComponent<Rigidbody>().useGravity)
                     GetComponent<Rigidbody>().useGravity = false;
+                if (GetComponent<TrailRenderer>() != null && GetComponent<TrailRenderer>().enabled)
+                    GetComponent<TrailRenderer>().enabled = false;
                 break;
 
             case STATE.EMERGING:
@@ -109,6 +105,8 @@ public class BallHandler : MonoBehaviour
                     GetComponent<Rigidbody>().isKinematic = false;
                 if (GetComponent<Rigidbody>() != null && GetComponent<Rigidbody>().useGravity)
                     GetComponent<Rigidbody>().useGravity = false;
+                if (GetComponent<TrailRenderer>() != null && GetComponent<TrailRenderer>().enabled)
+                    GetComponent<TrailRenderer>().enabled = false;
                 break;
 
             case STATE.IN_PLAY:
@@ -118,6 +116,8 @@ public class BallHandler : MonoBehaviour
                     GetComponent<Rigidbody>().isKinematic = false;
                 if (GetComponent<Rigidbody>() != null && !GetComponent<Rigidbody>().useGravity)
                     GetComponent<Rigidbody>().useGravity = true;
+                if (GetComponent<TrailRenderer>() != null && !GetComponent<TrailRenderer>().enabled)
+                    GetComponent<TrailRenderer>().enabled = true;
                 break;
             default:
                 break;

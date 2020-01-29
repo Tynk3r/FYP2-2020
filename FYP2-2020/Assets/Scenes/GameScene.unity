@@ -170,6 +170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06575f17d50c9e94699b50f78769d2bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  score: 0
   timerText: {fileID: 122054483}
 --- !u!114 &122054483
 MonoBehaviour:
@@ -585,7 +586,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1384230780}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 7.5, z: 5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -839,6 +840,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2cb186a85f8435847ac832aac072fc67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shouldGameStart: 0
   shouldTimerRun: 1
   timer: {fileID: 122054482}
   mainCamera: {fileID: 963194227}
@@ -846,6 +848,7 @@ MonoBehaviour:
   platformPrefab: {fileID: 887260650468317477, guid: 6b77af7d2aa9b644098c1e8048768b04,
     type: 3}
   platforms: []
+  ballStartingPosition: {x: 0, y: 7.5, z: 5}
   gapBetweenPlatforms: 0.001
   platformEmergePosY: 11
   platformRecedePosY: -11
@@ -1007,8 +1010,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 887260649390874140}
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -10, y: 2.8e-14, z: 0}
-  m_LocalScale: {x: 20, y: 4, z: 24.055}
+  m_LocalPosition: {x: -9, y: 0, z: 0}
+  m_LocalScale: {x: 35, y: 4, z: 24.055}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 6
@@ -1021,8 +1024,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 887260649181608605}
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 10, y: -2.8e-14, z: 0}
-  m_LocalScale: {x: 20, y: 4, z: 24.055}
+  m_LocalPosition: {x: 9, y: 0, z: 0}
+  m_LocalScale: {x: 35, y: 4, z: 24.055}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 7

@@ -5,7 +5,10 @@ using UnityEngine.UI;
 
 public class Timer : MonoBehaviour
 {
+    public int score = 0;
     public Text timerText;
+
+    private int prevScore;
     private float timeElapsed = 0f;
     void Update()
     {
@@ -13,10 +16,18 @@ public class Timer : MonoBehaviour
 
     public void UpdateScore()
     {
+        score = (int)timeElapsed + (GameController.instance.blocksBroken * 10);
         timeElapsed += Time.deltaTime;
-        // score = (int)(time elapsed) + (int)(number of blocks broken * 100)
 
         //set timer UI
-        timerText.text = "Score: " + ((int)timeElapsed + (GameController.instance.blocksBroken * 10)).ToString();
+        timerText.text = "Score: " + score.ToString();
+    }
+
+    public int ResetScore()
+    {
+        prevScore = score;
+        timeElapsed = 0f;
+        score = 0;
+        return prevScore;
     }
 }

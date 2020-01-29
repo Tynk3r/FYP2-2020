@@ -38,6 +38,7 @@ public class Platform : MonoBehaviour
 
     private void FixedUpdate()
     {
+
     }
 
     public void UpdateMovement()
@@ -59,8 +60,8 @@ public class Platform : MonoBehaviour
                 break;
 
             case STATE.RECEDING:
-                if (GetComponent<BoxCollider>() != null && GetComponent<BoxCollider>().enabled)
-                    GetComponent<BoxCollider>().enabled = false;
+                if (GetComponent<BoxCollider>() != null && !GetComponent<BoxCollider>().enabled)
+                    GetComponent<BoxCollider>().enabled = true;
                 transform.Translate(0f, 0f, recedeSpeed);
                 if (transform.position.z >= recedeEndZ)
                     toBeRemoved = true;
