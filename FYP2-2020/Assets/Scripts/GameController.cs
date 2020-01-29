@@ -44,6 +44,7 @@ public class GameController : MonoBehaviour
     {
         blocksBroken = 0;
         gameState = GAME_STATE.PRE_START;
+        timer.gameObject.SetActive(false);
         ball.SetBallState(BallHandler.STATE.PRE_START);
         if (platforms.Count == 0)
             StartCoroutine(SpawnPlatform());
@@ -159,15 +160,11 @@ public class GameController : MonoBehaviour
     {
         gameState = GAME_STATE.IN_PLAY;
         ball.SetBallState(BallHandler.STATE.EMERGING);
+        timer.gameObject.SetActive(true);
     }
 
     private void EndGame()
     {
-#if UNITY_EDITOR
-        //UnityEditor.EditorApplication.isPlaying = false;
-#else
-         //Application.Quit();
-#endif
         gameState = GAME_STATE.ENDED;
     }
 }
