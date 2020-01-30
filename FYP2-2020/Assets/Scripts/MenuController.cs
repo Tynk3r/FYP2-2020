@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -25,8 +26,19 @@ public class MenuController : MonoBehaviour
     public GameObject endOfGameContainer;
 
     [Header("Splash Animation")]
-    public float splashAnimationSpeed = .1f;
-    public GameObject mainMenuLogo;
+    public float logoFadeInSpeed = .01f;
+    public float logoFirstPauseLength = 1f;
+    public float logoMoveSpeed = 5f;
+    public float logoSecondPauseLength = 1f;
+    public float panelFadeInSpeed = 0.005f;
+    public float buttonFadeInSpeed = .01f;
+    public Image mainMenuLogo;
+    public Image mainMenuPanel;
+    public TextMeshProUGUI playButtonText;
+    public TextMeshProUGUI statsButtonText;
+    public TextMeshProUGUI optionsButtonText;
+    public TextMeshProUGUI quitButtonText;
+    public TextMeshProUGUI versionText;
 
     private MENU_STATE currentState;
 
@@ -48,27 +60,72 @@ public class MenuController : MonoBehaviour
     private IEnumerator SplashAnimation()
     {
         GameController.instance.shouldPlatformsMove = false;
+
+        // Fade logo in
         while (splashLogo.GetComponent<Image>().color.a < 1f)
         {
-            splashLogo.GetComponent<Image>().color = new Color(splashLogo.GetComponent<Image>().color.r, splashLogo.GetComponent<Image>().color.g, splashLogo.GetComponent<Image>().color.b, splashLogo.GetComponent<Image>().color.a + splashAnimationSpeed);
+            splashLogo.GetComponent<Image>().color = new Color(splashLogo.GetComponent<Image>().color.r, splashLogo.GetComponent<Image>().color.g, splashLogo.GetComponent<Image>().color.b, splashLogo.GetComponent<Image>().color.a + logoFadeInSpeed);
             yield return new WaitForEndOfFrame();
         }
-        yield return new WaitForSecondsRealtime(2.5f);
-        GameController.instance.shouldPlatformsMove = true;
+        yield return new WaitForSecondsRealtime(logoFirstPauseLength); // pause for a second
 
+        GameController.instance.shouldPlatformsMove = true; // start moving platforms in background
+        mainMenuPanel.gameObject.SetActive(true); // enable main menu UI but set to transparent
+        mainMenuPanel.color = new Color(mainMenuPanel.color.r, mainMenuPanel.color.g, mainMenuPanel.color.b, 0f);
+        mainMenuLogo.color = new Color(mainMenuLogo.color.r, mainMenuLogo.color.g, mainMenuLogo.color.b, 0f);
+        playButtonText.color = new Color(playButtonText.color.r, playButtonText.color.g, playButtonText.color.b, 0f);
+        statsButtonText.color = new Color(statsButtonText.color.r, statsButtonText.color.g, statsButtonText.color.b, 0f);
+        optionsButtonText.color = new Color(optionsButtonText.color.r, optionsButtonText.color.g, optionsButtonText.color.b, 0f);
+        quitButtonText.color = new Color(quitButtonText.color.r, quitButtonText.color.g, quitButtonText.color.b, 0f);
+        versionText.color = new Color(versionText.color.r, versionText.color.g, versionText.color.b, 0f);
         while (splashLogo.GetComponent<RectTransform>().anchoredPosition != mainMenuLogo.GetComponent<RectTransform>().anchoredPosition)
         {
-            splashLogo.GetComponent<RectTransform>().anchoredPosition = Vector2.MoveTowards(splashLogo.GetComponent<RectTransform>().anchoredPosition, mainMenuLogo.GetComponent<RectTransform>().anchoredPosition, 5f);
+            // start moving logo up into main menu logo position
+            splashLogo.GetComponent<RectTransform>().anchoredPosition = Vector2.MoveTowards(splashLogo.GetComponent<RectTransform>().anchoredPosition, mainMenuLogo.GetComponent<RectTransform>().anchoredPosition, logoMoveSpeed);
+            // fade in main menu background
+            if (mainMenuPanel.color.a < 0.4f)
+                mainMenuPanel.color = new Color(mainMenuPanel.color.r, mainMenuPanel.color.g, mainMenuPanel.color.b, mainMenuPanel.color.a + panelFadeInSpeed);
             yield return new WaitForEndOfFrame();
         }
-        yield return new WaitForSecondsRealtime(2.5f);
-
-        while (GameController.instance.platforms.Count < 8f)
+        yield return new WaitForSecondsRealtime(logoSecondPauseLength); // pause for a second
+        // start fading in buttons (quit -> options -> stats -> wait for blocks then play + version)
+        while (quitButtonText.color.a < 1f)
+        {
+            quitButtonText.color = new Color(quitButtonText.color.r, quitButtonText.color.g, quitButtonText.color.b, quitButtonText.color.a + buttonFadeInSpeed);
             yield return new WaitForEndOfFrame();
-        ChangeMenuState(1);
+        }
+        while (optionsButtonText.color.a < 1f)
+        {
+            optionsButtonText.color = new Color(optionsButtonText.color.r, optionsButtonText.color.g, optionsButtonText.color.b, optionsButtonText.color.a + buttonFadeInSpeed);
+            yield return new WaitForEndOfFrame();
+        }
+        while (statsButtonText.color.a < 1f)
+        {
+            statsButtonText.color = new Color(statsButtonText.color.r, statsButtonText.color.g, statsButtonText.color.b, statsButtonText.color.a + buttonFadeInSpeed);
+            yield return new WaitForEndOfFrame();
+        }
+        while (GameController.instance.platforms.Count < 5f)
+            yield return new WaitForEndOfFrame();
+        while (playButtonText.color.a < 1f)
+        {
+            playButtonText.color = new Color(playButtonText.color.r, playButtonText.color.g, playButtonText.color.b, playButtonText.color.a + buttonFadeInSpeed);
+            versionText.color = new Color(versionText.color.r, versionText.color.g, versionText.color.b, playButtonText.color.a); // PURPOSELY SET TO PLAYBUTTONTEXT ALPHA TO MATCH
+            yield return new WaitForEndOfFrame();
+        }
+        if (currentState == MENU_STATE.SPLASH)
+            ChangeMenuState(1);
     }
     public void ChangeMenuState(int newStateID)
     {
+        // in case change to options or stats while loading
+        mainMenuPanel.color = new Color(mainMenuPanel.color.r, mainMenuPanel.color.g, mainMenuPanel.color.b, 0.4f);
+        mainMenuLogo.color = new Color(mainMenuLogo.color.r, mainMenuLogo.color.g, mainMenuLogo.color.b, 1f);
+        playButtonText.color = new Color(playButtonText.color.r, playButtonText.color.g, playButtonText.color.b, 1f);
+        statsButtonText.color = new Color(statsButtonText.color.r, statsButtonText.color.g, statsButtonText.color.b, 1f);
+        optionsButtonText.color = new Color(optionsButtonText.color.r, optionsButtonText.color.g, optionsButtonText.color.b, 1f);
+        quitButtonText.color = new Color(quitButtonText.color.r, quitButtonText.color.g, quitButtonText.color.b, 1f);
+        versionText.color = new Color(versionText.color.r, versionText.color.g, versionText.color.b, 1f);
+
         splashLogo.SetActive(false);
         mainMenuContainer.SetActive(false);
         statMenuContainer.SetActive(false);

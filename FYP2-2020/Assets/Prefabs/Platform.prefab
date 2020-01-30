@@ -110,7 +110,6 @@ MonoBehaviour:
   emergeSpeed: 0.05
   emergeEndZ: 2.5
   dropSpeed: 0.05
-  endOfDrop: -10
   recedeSpeed: 0.05
   recedeEndZ: 5.5
   toBeRemoved: 0

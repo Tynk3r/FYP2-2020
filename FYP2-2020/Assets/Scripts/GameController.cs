@@ -170,6 +170,7 @@ public class GameController : MonoBehaviour
         gameState = GAME_STATE.IN_PLAY;
         ball.SetBallState(BallHandler.STATE.EMERGING);
         ball.transform.position = ballStartingPosition;
+        ball.GetComponent<TrailRenderer>()?.Clear();
         timer.gameObject.SetActive(true);
         shouldGameStart = false;
         MenuController.instance.ChangeMenuState(5);
