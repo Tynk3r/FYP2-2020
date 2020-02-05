@@ -12,6 +12,12 @@ public class BallHandler : MonoBehaviour
         IN_PLAY
     };
 
+    public enum CONTROL_TYPE
+    {
+        TILT = 0,
+        ROLL
+    };
+
     public float xSpeed = 1f;
     public float maxYSpeed = 5f;
     public float ballEmergeSpeed = 1f;
@@ -21,9 +27,12 @@ public class BallHandler : MonoBehaviour
     private Vector3 intendedBallPosition;
     private STATE ballState = STATE.PRE_START;
 
+    public CONTROL_TYPE controlType = CONTROL_TYPE.ROLL;
+
     // Start is called before the first frame update
     void Start()
     {
+        Input.gyro.enabled = true;
         if (rb == null && GetComponent<Rigidbody>() != null)
             rb = GetComponent<Rigidbody>();
     }
@@ -56,6 +65,7 @@ public class BallHandler : MonoBehaviour
                 break;
 
             case STATE.IN_PLAY:
+                //mouse
                 /*if (Input.GetMouseButton(0))
                 {
                     intendedBallPosition = Camera.main.ScreenPointToRay(Input.mousePosition).GetPoint(-Camera.main.transform.position.z + transform.position.z);
@@ -71,12 +81,34 @@ public class BallHandler : MonoBehaviour
                 {
                     rb.velocity = new Vector3(0f, rb.velocity.y, rb.velocity.z);
                 }*/
-                if (Input.GetAxis("Horizontal") > 0f)
+
+                // arrow keys
+                /*if (Input.GetAxis("Horizontal") > 0f)
                     rb.velocity = new Vector3(xSpeed, rb.velocity.y, rb.velocity.z);
                 else if (Input.GetAxis("Horizontal") < 0f)
                     rb.velocity = new Vector3(-xSpeed, rb.velocity.y, rb.velocity.z);
                 else
-                    rb.velocity = new Vector3(0f, rb.velocity.y, rb.velocity.z);
+                    rb.velocity = new Vector3(0f, rb.velocity.y, rb.velocity.z);*/
+
+                //gyro
+                if (PlayerPrefs.GetString("Control Type", "ROLL") == "ROLL")
+                    controlType = CONTROL_TYPE.ROLL;
+                else if (PlayerPrefs.GetString("Control Type", "ROLL") == "TILT")
+                    controlType = CONTROL_TYPE.TILT;
+                switch (controlType)
+                {
+                    case CONTROL_TYPE.ROLL:
+                    rb.velocity = new Vector3(xSpeed * Input.gyro.rotationRateUnbiased.y, rb.velocity.y, rb.velocity.z);
+                    break;
+                    
+                    case CONTROL_TYPE.TILT:
+                    rb.velocity = new Vector3(xSpeed * -Input.gyro.rotationRateUnbiased.z, rb.velocity.y, rb.velocity.z);
+                    break;
+                    
+                    default:
+                    break;
+                    
+                }
                 break;
 
             default:

@@ -178,6 +178,11 @@ public class GameController : MonoBehaviour
 
     private void EndGame()
     {
+        PlayerPrefs.SetInt("Last Game Score", timer.score);
+        if (PlayerPrefs.GetInt("Highscore", 0) < timer.score)
+            PlayerPrefs.SetInt("Highscore", timer.score);
+        if (blocksBroken > PlayerPrefs.GetInt("Most Blocks Broken in a Run", 0))
+            PlayerPrefs.SetInt("Most Blocks Broken in a Run", blocksBroken);
         gameState = GAME_STATE.PRE_START;
         ball.SetBallState(BallHandler.STATE.PRE_START);
         blocksBroken = 0;

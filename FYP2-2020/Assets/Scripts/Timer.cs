@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Timer : MonoBehaviour
 {
     public int score = 0;
-    public Text timerText;
+    public TextMeshProUGUI timerText;
 
     private int prevScore;
     private float timeElapsed = 0f;
@@ -20,7 +21,7 @@ public class Timer : MonoBehaviour
         timeElapsed += Time.deltaTime;
 
         //set timer UI
-        timerText.text = "Score: " + score.ToString();
+        timerText.SetText("Score: " + score.ToString());
     }
 
     public int ResetScore()

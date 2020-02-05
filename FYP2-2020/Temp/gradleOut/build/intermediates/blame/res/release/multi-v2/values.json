@@ -1,0 +1,42 @@
+{
+    "logs": [
+        {
+            "outputFile": "C:\\Users\\170264F\\Documents\\GitHub\\FYP2-2020\\FYP2-2020\\Temp\\gradleOut\\build\\intermediates\\incremental\\mergeReleaseResources\\merged.dir\\values\\values.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\170264F\\Documents\\GitHub\\FYP2-2020\\FYP2-2020\\Temp\\gradleOut\\src\\main\\res\\values\\styles.xml",
+                    "from": {
+                        "startLines": "-1,-1,-1",
+                        "startColumns": "-1,-1,-1",
+                        "startOffsets": "-1,-1,-1"
+                    },
+                    "to": {
+                        "startLines": "4,6,9",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "168,268,406",
+                        "endLines": "5,8,12",
+                        "endColumns": "8,8,8",
+                        "endOffsets": "263,401,628"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\170264F\\Documents\\GitHub\\FYP2-2020\\FYP2-2020\\Temp\\gradleOut\\src\\main\\res\\values\\strings.xml",
+                    "from": {
+                        "startLines": "2,-1",
+                        "startColumns": "2,-1",
+                        "startOffsets": "55,-1",
+                        "endColumns": "42,-1",
+                        "endOffsets": "95,-1"
+                    },
+                    "to": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,100",
+                        "endColumns": "44,67",
+                        "endOffsets": "95,163"
+                    }
+                }
+            ]
+        }
+    ]
+}
