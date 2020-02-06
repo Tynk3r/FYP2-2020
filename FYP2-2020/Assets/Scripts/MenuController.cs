@@ -51,6 +51,8 @@ public class MenuController : MonoBehaviour
 
     [Header("Options Screen")]
     public TextMeshProUGUI controlTypeChoice;
+    public Toggle musicToggle;
+    public Toggle soundEffectsToggle;
 
     private MENU_STATE currentState;
 

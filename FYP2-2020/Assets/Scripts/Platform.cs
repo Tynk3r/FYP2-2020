@@ -75,6 +75,7 @@ public class Platform : MonoBehaviour
     public void ShatterPlatform()
     {
         GameController.instance.blocksBroken++;
+        GameController.instance.sfxPlayer.PlayOneShot(GameController.instance.breakSoundEffect);
 
         GameObject destroyEffect = Instantiate(platformBreakPrefab);
         destroyEffect.transform.position = transform.position;

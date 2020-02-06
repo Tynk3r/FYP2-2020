@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
+[RequireComponent(typeof(AudioSource))]
 
 public class GameController : MonoBehaviour
 {
@@ -29,17 +28,25 @@ public class GameController : MonoBehaviour
     public float platformRecedePosY;
     public float bottomOfScreen;
 
+    [Header("Audio")]
+    public AudioSource backgroundMusicPlayer;
+    public AudioSource sfxPlayer;
+    public AudioClip bounceSoundEffect;
+    public AudioClip breakSoundEffect;
+
     [HideInInspector]
     public int blocksBroken = 0;
 
     private GAME_STATE gameState = GAME_STATE.PRE_START;
     private float highestPlatformPosition = -100000f;
     private List<Platform> platformsToRemove = new List<Platform>();
+    private float fixedDeltaTime;
 
     private void Awake()
     {
         if (instance == null)
             instance = this;
+        this.fixedDeltaTime = Time.fixedDeltaTime;
     }
 
     // Start is called before the first frame update
@@ -56,6 +63,14 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!MenuController.instance.musicToggle.isOn)
+            backgroundMusicPlayer.volume = 0f;
+        else
+            backgroundMusicPlayer.volume = 1f;
+        if (!MenuController.instance.soundEffectsToggle.isOn)
+            sfxPlayer.volume = 0f;
+        else
+            sfxPlayer.volume = 1f;
         switch (gameState)
         {
             case GAME_STATE.PRE_START:
@@ -81,6 +96,7 @@ public class GameController : MonoBehaviour
                 break;
 
             case GAME_STATE.IN_PLAY:
+                Time.timeScale += 0.015f * Time.fixedDeltaTime;
                 ball.UpdateMovement();
                 if (ball.transform.position.y <= bottomOfScreen)
                     EndGame();
@@ -183,6 +199,8 @@ public class GameController : MonoBehaviour
             PlayerPrefs.SetInt("Highscore", timer.score);
         if (blocksBroken > PlayerPrefs.GetInt("Most Blocks Broken in a Run", 0))
             PlayerPrefs.SetInt("Most Blocks Broken in a Run", blocksBroken);
+        Time.timeScale = 1.0f;
+        Time.fixedDeltaTime = this.fixedDeltaTime * Time.timeScale;
         gameState = GAME_STATE.PRE_START;
         ball.SetBallState(BallHandler.STATE.PRE_START);
         blocksBroken = 0;

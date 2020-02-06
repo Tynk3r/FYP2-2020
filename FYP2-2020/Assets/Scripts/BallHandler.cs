@@ -19,6 +19,7 @@ public class BallHandler : MonoBehaviour
     };
 
     public float xSpeed = 1f;
+    [Tooltip("Set to -1 to disable Y velocity limit.")]
     public float maxYSpeed = 5f;
     public float ballEmergeSpeed = 1f;
 
@@ -49,7 +50,7 @@ public class BallHandler : MonoBehaviour
     }
     public void UpdateMovement()
     {
-        if (rb.velocity.y >= maxYSpeed)
+        if (rb.velocity.y >= maxYSpeed && maxYSpeed != -1)
             rb.velocity = new Vector3(rb.velocity.x, maxYSpeed, rb.velocity.z);
 
         switch (ballState)
@@ -82,14 +83,15 @@ public class BallHandler : MonoBehaviour
                     rb.velocity = new Vector3(0f, rb.velocity.y, rb.velocity.z);
                 }*/
 
+#if UNITY_EDITOR
                 // arrow keys
-                /*if (Input.GetAxis("Horizontal") > 0f)
+                if (Input.GetAxis("Horizontal") > 0f)
                     rb.velocity = new Vector3(xSpeed, rb.velocity.y, rb.velocity.z);
                 else if (Input.GetAxis("Horizontal") < 0f)
                     rb.velocity = new Vector3(-xSpeed, rb.velocity.y, rb.velocity.z);
                 else
-                    rb.velocity = new Vector3(0f, rb.velocity.y, rb.velocity.z);*/
-
+                    rb.velocity = new Vector3(0f, rb.velocity.y, rb.velocity.z);
+#else
                 //gyro
                 if (PlayerPrefs.GetString("Control Type", "ROLL") == "ROLL")
                     controlType = CONTROL_TYPE.ROLL;
@@ -109,6 +111,7 @@ public class BallHandler : MonoBehaviour
                     break;
                     
                 }
+#endif
                 break;
 
             default:
@@ -164,8 +167,12 @@ public class BallHandler : MonoBehaviour
     {
         GameObject go = collision.collider.gameObject;
         if (go.GetComponent<Platform>() != null)
+        {
             if (GetComponent<SphereCollider>().bounds.min.y < go.transform.position.y)
                 go.GetComponent<Platform>().ShatterPlatform();
+            else
+                GameController.instance.sfxPlayer.PlayOneShot(GameController.instance.bounceSoundEffect);
+        }
     }
 
 }
